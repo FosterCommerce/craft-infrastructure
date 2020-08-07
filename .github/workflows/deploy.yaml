@@ -64,13 +64,13 @@ jobs:
 
       - name: Install Ansible requirements
         run: ls
-        shell: ansible-galaxy install -r requirements.yaml
+        run: ansible-galaxy install -r requirements.yaml
         env:
           WEBSERVER_PRIVATE_KEY: ${{secrets.WEBSERVER_PRIVATE_KEY}}
 
       - name: Copy web app to remote server
         run: ls
-        shell: |
+        run: |
           ansible-playbook \
             --inventory=./infrastructure/ansible/inventory.sh \
             -u deploy \
