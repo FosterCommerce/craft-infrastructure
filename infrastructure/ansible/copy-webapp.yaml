@@ -4,7 +4,7 @@
   tasks:
     - name: Copy web app files
       copy:
-        src: ./
+        src: "{{ playbook_dir }}/../../"
         dest: /var/www/
         owner: www-data
         group: www-data

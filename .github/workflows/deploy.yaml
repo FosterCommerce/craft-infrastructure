@@ -67,7 +67,7 @@ jobs:
       - uses: actions/cache@v1
         id: ansible-galaxy-cache
         with:
-          path: /home/runner/.ansible/roles/
+          path: ~/.ansible/roles/
           key: ${{ runner.os }}-ansible-galaxy-roles-${{ hashFiles('infrastructure/ansible/requirements.yaml') }}
 
       - name: Install Ansible requirements
