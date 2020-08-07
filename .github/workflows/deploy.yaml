@@ -16,11 +16,11 @@ jobs:
           if [[ $GITHUB_REF == 'refs/heads/main' ]]; then
               echo "::set-env name=ENVIRONMENT::production"
               echo "::set-env name=WEBSERVER_HOSTS::${{secrets.PRODUCTION_WEBSERVER_HOSTS}}"
-              print("::set-env name=WEBSERVER_PRIVATE_KEY::{}".format(${{secrets.PRODUCTION_WEBSERVER_PRIVATE_KEY}}))
+              echo "::set-env name=WEBSERVER_PRIVATE_KEY::$(echo ${{secrets.PRODUCTION_WEBSERVER_PRIVATE_KEY}} | sed -z 's/\n/\\n/g')"
           else
               echo "::set-env name=ENVIRONMENT::staging"
               echo "::set-env name=WEBSERVER_HOSTS::${{secrets.STAGING_WEBSERVER_HOSTS}}"
-              print("::set-env name=WEBSERVER_PRIVATE_KEY::{}".format(${{secrets.STAGING_WEBSERVER_PRIVATE_KEY}}))
+              echo "::set-env name=WEBSERVER_PRIVATE_KEY::$(echo ${{secrets.STAGING_WEBSERVER_PRIVATE_KEY}} | sed -z 's/\n/\\n/g')"
           fi
 
       - uses: actions/checkout@v2
