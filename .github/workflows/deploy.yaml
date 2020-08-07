@@ -64,6 +64,12 @@ jobs:
       #   if: steps.spa-build-cache.outputs.cache-hit != 'true'
       #   run: yarn workspace causebox-spa build
 
+      - uses: actions/cache@v1
+        id: ansible-galaxy-cache
+        with:
+          path: /home/runner/.ansible/roles/
+          key: ${{ runner.os }}-ansible-galaxy-roles-${{ hashFiles('infrastructure/ansible/requirements.yaml') }}
+
       - name: Install Ansible requirements
         run: ansible-galaxy install -r infrastructure/ansible/requirements.yaml
 
