@@ -82,7 +82,7 @@ jobs:
           sudo chmod 600 ~/.ssh/deploykey
 
       - name: Echo key
-        run: cat ~/.ssh/deploykey
+        run: echo "$(cat ~/.ssh/deploykey)"
 
       - name: Copy web app to remote server
         run: |
