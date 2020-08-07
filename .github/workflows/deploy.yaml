@@ -77,8 +77,10 @@ jobs:
 
       - name: Add private key
         run: |
-          echo "${WEBSERVER_PRIVATE_KEY}" > ../deploykey
-          sudo chmod 0600 ../deploykey
+          eval $(ssh-agent -s)
+          mkdir -p ~/.ssh
+          sudo chmod 700 ~/.ssh
+          echo "${WEBSERVER_PRIVATE_KEY}" | ssh-add - > ~/.ssh/deploykey
 
       - name: Copy web app to remote server
         run: |
