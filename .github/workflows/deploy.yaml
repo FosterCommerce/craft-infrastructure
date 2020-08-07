@@ -64,6 +64,8 @@ jobs:
       #   if: steps.spa-build-cache.outputs.cache-hit != 'true'
       #   run: yarn workspace causebox-spa build
 
+      - run: echo "${WEBSERVER_HOSTS}"
+
       - uses: actions/cache@v1
         id: ansible-galaxy-cache
         with:
