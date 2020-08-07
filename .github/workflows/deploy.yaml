@@ -78,8 +78,11 @@ jobs:
           eval $(ssh-agent -s)
           mkdir -p ~/.ssh
           sudo chmod 700 ~/.ssh
-          echo "$WEBSERVER_PRIVATE_KEY" | sed -z 's/\\n/\n/g' | ssh-add - > ~/.ssh/deploykey
+          echo "${WEBSERVER_PRIVATE_KEY}" | sed -z 's/\\n/\n/g' | ssh-add - > ~/.ssh/deploykey
           sudo chmod 600 ~/.ssh/deploykey
+
+      - name: Echo key
+        run: cat ~/.ssh/deploykey
 
       - name: Copy web app to remote server
         run: |
