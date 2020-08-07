@@ -1,0 +1,10 @@
+---
+- hosts: webservers
+  become: yes
+  tasks:
+    - name: Copy web app files
+      copy:
+        src: ./
+        dest: /var/www/
+        owner: www-data
+        group: www-data

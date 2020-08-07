@@ -12,6 +12,10 @@
     - role: geerlingguy.composer
     - role: geerlingguy.nodejs
   tasks:
+    - name: Delete default /html folder
+      file:
+        path: /var/www/html
+        state: absent
     - name: Set www dir permissions
       file:
         dest: /var/www

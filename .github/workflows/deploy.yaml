@@ -1,0 +1,79 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+jobs:
+  deploy:
+    name: Deploy web app
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Set environment by branch
+        run: |
+          if [[ $GITHUB_REF == 'refs/heads/main' ]]; then
+              echo "::set-env name=ENVIRONMENT::production"
+              echo "::set-env name=WEBSERVER_HOSTS::"${{secrets.PRODUCTION_WEBSERVER_HOSTS}}
+          else
+              echo "::set-env name=ENVIRONMENT::staging"
+              echo "::set-env name=WEBSERVER_HOSTS::"${{secrets.STAGING_WEBSERVER_HOSTS}}
+          fi
+
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v2-beta
+        with:
+          node-version: '14'
+
+      # TODO
+      # - name: Get Composer Cache Directory
+      #   id: composer-vendor-dir
+      #   run: |
+      #     echo "::set-output name=dir::$(composer config vendor-dir)"
+      # 
+      # - uses: actions/cache@v1
+      #   id: composer-cache
+      #   with:
+      #     path: ${{ steps.composer-vendor-dir.outputs.dir }}
+      #     key: ${{ runner.os }}-composer-vendors-${{ hashFiles('**/composer.*') }}
+      # 
+      # - name: Install Composer dependencies
+      #   if: steps.composer-cache.outputs.cache-hit != 'true'
+      #   run: composer install --prefer-dist --no-progress --no-suggest
+      # 
+      # - uses: actions/cache@v1
+      #   id: yarn-cache
+      #   with:
+      #     path: ~/.cache
+      #     key: ${{ runner.os }}-yarn-cache-dir-${{ hashFiles('**/yarn.lock') }}
+      # 
+      # - name: Get JS dependancies
+      #   run: yarn install --frozen-lockfile
+      # 
+      # - uses: actions/cache@v1
+      #   id: spa-build-cache
+      #   with:
+      #     path: web/spa
+      #     key: ${{ runner.os }}-spa-build-${{ hashFiles('packages/spa/src/**/*.*') }}-${{ hashFiles('**/yarn.lock') }}
+      #
+      # - name: Build SPA frontend
+      #   if: steps.spa-build-cache.outputs.cache-hit != 'true'
+      #   run: yarn workspace causebox-spa build
+
+      - name: Install Ansible requirements
+        run: ls
+        shell: ansible-galaxy install -r requirements.yaml
+        env:
+          WEBSERVER_PRIVATE_KEY: ${{secrets.WEBSERVER_PRIVATE_KEY}}
+
+      - name: Copy web app to remote server
+        run: ls
+        shell: |
+          ansible-playbook \
+            --inventory=./infrastructure/ansible/inventory.sh \
+            -u deploy \
+            infrastructure/ansible/copy-webapp.yaml
+        env:
+          WEBSERVER_PRIVATE_KEY: ${{secrets.WEBSERVER_PRIVATE_KEY}}
