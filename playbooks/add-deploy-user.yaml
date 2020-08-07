@@ -1,0 +1,12 @@
+---
+- hosts: webservers
+  become: yes
+  tasks:
+  - name: Create deploy user
+    user:
+      name: deploy
+      groups: www-data
+  - name: Add authorized keys
+    authorized_key:
+      user: deploy
+      key: "{{ lookup('file', '{{ playbook_dir }}/files/deploy-key.pub') }}"

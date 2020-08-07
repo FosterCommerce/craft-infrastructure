@@ -1,0 +1,60 @@
+nginx_use_ppa: true
+nginx_remove_default_vhost: true
+nginx_conf_template: "nginx.conf.j2"
+nginx_vhosts:
+  - root: /var/www/web
+    index: index.php index.html index.htm
+    state: present
+    server_name: default
+    extra_parameters: |
+      location ~ \.php$ {
+          try_files $fastcgi_script_name =404;
+          fastcgi_split_path_info ^(.+\.php)(/.+)$;
+          fastcgi_pass unix:/var/run/php/php7.4-fpm.sock;
+          fastcgi_param DOCUMENT_ROOT $realpath_root;
+          fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+          fastcgi_index index.php;
+          fastcgi_buffers 8 16k;
+          fastcgi_buffer_size 32k;
+          include fastcgi_params;
+      }
+
+php_enable_php_fpm: true
+php_fpm_listen: "/var/run/php/php7.4-fpm.sock"
+php_fpm_daemon: php7.4-fpm
+php_default_version_debian: 7.4
+php_enable_webserver: false
+php_packages:
+  - php7.4-common
+  - php7.4-cli
+  - php7.4-dev
+  - php7.4-fpm
+  - libpcre3-dev
+  - php7.4-gd
+  - php7.4-curl
+  - php7.4-imap
+  - php7.4-json
+  - php7.4-opcache
+  - php7.4-xml
+  - php7.4-mbstring
+  - php-apcu
+  - php7.4-mysql
+  - php7.4-pgsql
+  - php7.4-imagick
+  - php7.4-tidy
+  - php7.4-xmlrpc
+  - php7.4-zip
+  - libgcrypt11-dev
+  - zlib1g-dev
+  - php7.4-intl
+  - php7.4-redis
+  - php7.4-soap
+
+composer_home_path: /home/deploy/.composer
+composer_home_owner: deploy
+composer_home_group: deploy
+
+nodejs_install_npm_user: deploy
+nodejs_version: "14.x"
+nodejs_npm_global_packages:
+  - yarn

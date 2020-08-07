@@ -1,0 +1,20 @@
+---
+- hosts: webservers
+  become: yes
+  vars_files:
+    - "../vars/webserver.yaml"
+  roles:
+    - role: geerlingguy.nginx
+    - role: benjamin-smith.ansible-ondrej-php-repo
+    - role: geerlingguy.php
+    # Not entirely necessary if we're installing dependencies in GitHub Actions
+    # and copying the installed/built files onto the server.
+    - role: geerlingguy.composer
+    - role: geerlingguy.nodejs
+  tasks:
+    - name: Set www dir permissions
+      file:
+        dest: /var/www
+        owner: www-data
+        group: www-data
+        recurse: yes

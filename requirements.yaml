@@ -1,0 +1,16 @@
+---
+- name: benjamin-smith.ansible-ondrej-php-repo
+  src: https://github.com/benjamin-smith/ansible-ondrej-php-repo
+  version: master
+
+- src: geerlingguy.php
+  version: 4.5.0
+
+- src: geerlingguy.nginx
+  version: 2.8.0
+
+- src: geerlingguy.composer
+  version: 1.7.6
+
+- src: geerlingguy.nodejs
+  version: 5.1.1
