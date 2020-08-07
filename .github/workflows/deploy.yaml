@@ -73,24 +73,13 @@ jobs:
       - name: Install Ansible requirements
         run: ansible-galaxy install -r infrastructure/ansible/requirements.yaml
 
-      - name: Add private key
-        run: |
-          eval $(ssh-agent -s)
-          mkdir -p ~/.ssh
-          sudo chmod 700 ~/.ssh
-          echo "${WEBSERVER_PRIVATE_KEY}" | sed -z 's/\\n/\n/g' | ssh-add - > ~/.ssh/deploykey
-          sudo chmod 600 ~/.ssh/deploykey
-
-      - name: Echo key
-        run: echo "$(cat ~/.ssh/deploykey)"
+      - uses: webfactory/ssh-agent@v0.4.0
+        with:
+          ssh-private-key: $WEBSERVER_PRIVATE_KEY
 
       - name: Copy web app to remote server
         run: |
           ansible-playbook \
             --inventory ./infrastructure/ansible/inventory.sh \
-            --private-key ~/.ssh/deploykey \
             -u deploy \
             infrastructure/ansible/copy-webapp.yaml
-
-      - name: Delete private key
-        run: rm ~/.ssh/deploykey
