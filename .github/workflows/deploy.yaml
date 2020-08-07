@@ -16,11 +16,11 @@ jobs:
           if [[ $GITHUB_REF == 'refs/heads/main' ]]; then
               echo "::set-env name=ENVIRONMENT::production"
               echo "::set-env name=WEBSERVER_HOSTS::${{secrets.PRODUCTION_WEBSERVER_HOSTS}}"
-              echo "::set-env name=WEBSERVER_PRIVATE_KEY::${{secrets.PRODUCTION_WEBSERVER_PRIVATE_KEY}}"
+              print("::set-env name=WEBSERVER_PRIVATE_KEY::{}".format(${{secrets.PRODUCTION_WEBSERVER_PRIVATE_KEY}}))
           else
               echo "::set-env name=ENVIRONMENT::staging"
               echo "::set-env name=WEBSERVER_HOSTS::${{secrets.STAGING_WEBSERVER_HOSTS}}"
-              echo "::set-env name=WEBSERVER_PRIVATE_KEY::${{secrets.STAGING_WEBSERVER_PRIVATE_KEY}}"
+              print("::set-env name=WEBSERVER_PRIVATE_KEY::{}".format(${{secrets.STAGING_WEBSERVER_PRIVATE_KEY}}))
           fi
 
       - uses: actions/checkout@v2
@@ -64,8 +64,6 @@ jobs:
       #   if: steps.spa-build-cache.outputs.cache-hit != 'true'
       #   run: yarn workspace causebox-spa build
 
-      - run: echo "${WEBSERVER_HOSTS}"
-
       - uses: actions/cache@v1
         id: ansible-galaxy-cache
         with:
@@ -80,7 +78,7 @@ jobs:
           eval $(ssh-agent -s)
           mkdir -p ~/.ssh
           sudo chmod 700 ~/.ssh
-          echo "${WEBSERVER_PRIVATE_KEY}" | ssh-add - > ~/.ssh/deploykey
+          echo "$WEBSERVER_PRIVATE_KEY" | ssh-add - > ~/.ssh/deploykey
 
       - name: Copy web app to remote server
         run: |
