@@ -16,9 +16,11 @@ jobs:
           if [[ $GITHUB_REF == 'refs/heads/main' ]]; then
               echo "::set-env name=ENVIRONMENT::production"
               echo "::set-env name=WEBSERVER_HOSTS::"${{secrets.PRODUCTION_WEBSERVER_HOSTS}}
+              echo "::set-env name=WEBSERVER_PRIVATE_KEY::"${{secrets.PRODUCTION_WEBSERVER_PRIVATE_KEY}}
           else
               echo "::set-env name=ENVIRONMENT::staging"
               echo "::set-env name=WEBSERVER_HOSTS::"${{secrets.STAGING_WEBSERVER_HOSTS}}
+              echo "::set-env name=WEBSERVER_PRIVATE_KEY::"${{secrets.STAGING_WEBSERVER_PRIVATE_KEY}}
           fi
 
       - uses: actions/checkout@v2
@@ -64,14 +66,17 @@ jobs:
 
       - name: Install Ansible requirements
         run: ansible-galaxy install -r infrastructure/ansible/requirements.yaml
-        env:
-          WEBSERVER_PRIVATE_KEY: ${{secrets.WEBSERVER_PRIVATE_KEY}}
+
+      - name: Add private key
+        run: echo ${WEBSERVER_PRIVATE_KEY} > /tmp/deploykey
 
       - name: Copy web app to remote server
         run: |
           ansible-playbook \
-            --inventory=./infrastructure/ansible/inventory.sh \
+            --inventory ./infrastructure/ansible/inventory.sh \
+            --private-key /tmp/deploykey
             -u deploy \
             infrastructure/ansible/copy-webapp.yaml
-        env:
-          WEBSERVER_PRIVATE_KEY: ${{secrets.WEBSERVER_PRIVATE_KEY}}
+
+      - name: Delete private key
+        run: rm /tmp/deploykey
