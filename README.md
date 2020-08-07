@@ -53,7 +53,7 @@ ansible-playbook \
   --extra-vars "deploy_key=$(cat /path/to/deploy/key.pub)" \
   --inventory=ansible_hosts \
   -u azureuser \
-  playbooks/add-deploy-user.yaml
+  infrastructure/ansible/add-deploy-user.yaml
 ```
 
 ### TODO
@@ -68,5 +68,5 @@ ansible-playbook \
 ansible-playbook \
   --inventory=ansible_hosts \
   -u azureuser \
-  playbooks/provision-webservers.yaml
+  infrastructure/ansible/provision-webservers.yaml
 ```

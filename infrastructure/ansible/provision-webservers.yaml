@@ -2,7 +2,7 @@
 - hosts: webservers
   become: yes
   vars_files:
-    - "../vars/webserver.yaml"
+    - "{{ playbook_dir }}/vars/webserver.yaml"
   roles:
     - role: geerlingguy.nginx
     - role: benjamin-smith.ansible-ondrej-php-repo
