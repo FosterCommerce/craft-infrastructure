@@ -63,13 +63,11 @@ jobs:
       #   run: yarn workspace causebox-spa build
 
       - name: Install Ansible requirements
-        run: ls
         run: ansible-galaxy install -r requirements.yaml
         env:
           WEBSERVER_PRIVATE_KEY: ${{secrets.WEBSERVER_PRIVATE_KEY}}
 
       - name: Copy web app to remote server
-        run: ls
         run: |
           ansible-playbook \
             --inventory=./infrastructure/ansible/inventory.sh \
