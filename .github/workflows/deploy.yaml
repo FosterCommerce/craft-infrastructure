@@ -63,7 +63,7 @@ jobs:
       #   run: yarn workspace causebox-spa build
 
       - name: Install Ansible requirements
-        run: ansible-galaxy install -r requirements.yaml
+        run: ansible-galaxy install -r infrastructure/ansible/requirements.yaml
         env:
           WEBSERVER_PRIVATE_KEY: ${{secrets.WEBSERVER_PRIVATE_KEY}}
 
