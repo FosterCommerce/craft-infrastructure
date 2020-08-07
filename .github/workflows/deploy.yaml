@@ -75,7 +75,7 @@ jobs:
 
       - uses: webfactory/ssh-agent@v0.4.0
         with:
-          ssh-private-key: $WEBSERVER_PRIVATE_KEY
+          ssh-private-key: ${{secrets.STAGING_WEBSERVER_PRIVATE_KEY}}
 
       - name: Copy web app to remote server
         run: |
