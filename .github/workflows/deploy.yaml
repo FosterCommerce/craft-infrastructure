@@ -84,7 +84,7 @@ jobs:
         run: |
           ansible-playbook \
             --inventory ./infrastructure/ansible/inventory.sh \
-            --private-key ../deploykey \
+            --private-key ~/.ssh/deploykey \
             -u deploy \
             infrastructure/ansible/copy-webapp.yaml
 
