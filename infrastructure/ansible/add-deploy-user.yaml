@@ -9,4 +9,11 @@
   - name: Add authorized keys
     authorized_key:
       user: deploy
-      key: "{{ lookup('file', '{{ playbook_dir }}/files/deploy-key.pub') }}"
+      key: "{{ lookup('file', public_keyfile) }}"
+  - name: Add deploy user to sudoers
+    lineinfile:
+      dest: /etc/sudoers
+      state: present
+      regexp: "^%deploy"
+      line: "%deploy ALL=(ALL) NOPASSWD:ALL"
+      validate: /usr/sbin/visudo -cf %s

@@ -75,14 +75,14 @@ jobs:
 
       - name: Add private key
         run: |
-          echo ${WEBSERVER_PRIVATE_KEY} > /tmp/deploykey
-          chmod 0600 /tmp/deploykey
+          echo "${WEBSERVER_PRIVATE_KEY}" > ../deploykey
+          sudo chmod 0600 ../deploykey
 
       - name: Copy web app to remote server
         run: |
           ansible-playbook \
             --inventory ./infrastructure/ansible/inventory.sh \
-            --private-key /tmp/deploykey \
+            --private-key ../deploykey \
             -u deploy \
             infrastructure/ansible/copy-webapp.yaml
 
