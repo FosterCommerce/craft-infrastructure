@@ -12,6 +12,11 @@
     - role: geerlingguy.composer
     - role: geerlingguy.nodejs
   tasks:
+    - name: Install MySQL client
+      apt:
+        name: mariadb-client-core-10.1
+        update_cache: yes
+        state: present
     - name: Delete default /html folder
       file:
         path: /var/www/html

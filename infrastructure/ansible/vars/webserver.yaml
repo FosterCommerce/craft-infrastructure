@@ -2,11 +2,14 @@ nginx_use_ppa: true
 nginx_remove_default_vhost: true
 nginx_conf_template: "nginx.conf.j2"
 nginx_vhosts:
-  - root: /var/www/web
+  - root: /var/www/site/web
     index: index.php index.html index.htm
     state: present
     server_name: default
     extra_parameters: |
+      location / {
+          try_files $uri $uri/ /index.php?$query_string;
+      }
       location ~ \.php$ {
           try_files $fastcgi_script_name =404;
           fastcgi_split_path_info ^(.+\.php)(/.+)$;

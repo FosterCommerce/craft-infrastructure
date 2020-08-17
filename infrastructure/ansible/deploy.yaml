@@ -1,0 +1,73 @@
+---
+- hosts: webservers
+  become: yes
+  vars:
+    site_path: "/var/www/{{ commit_sha }}"
+  tasks:
+    - name: Copy web app files
+      synchronize:
+        src: "{{ playbook_dir }}/../../"
+        dest: "{{ site_path }}"
+        delete: yes
+        recursive: yes
+        rsync_opts:
+          - "--exclude=.git"
+
+    - name: Copy .env
+      template:
+        src: templates/.env.j2
+        dest: "{{ site_path }}/.env"
+
+    - name: Set ownership
+      file:
+        path: "{{ site_path }}"
+        state: directory
+        recurse: yes
+        owner: www-data
+        group: www-data
+
+    - name: Run DB migrations
+      command: "{{ site_path }}/craft migrate/all"
+      become: yes
+      become_user: www-data
+      run_once: true
+
+    - name: Sync project config
+      command: "{{ site_path }}/craft project-config/sync"
+      become: yes
+      become_user: www-data
+      run_once: true
+
+    - name: Clear caches
+      command: "{{ site_path }}/craft clear-caches/all"
+      become: yes
+      become_user: www-data
+      run_once: true
+
+    - name: Get current link target
+      stat:
+        path: /var/www/site
+      register: previous_live_site_sym
+
+    - name: Point live link to new site
+      become: yes
+      file:
+        src: "{{ site_path }}"
+        dest: /var/www/site
+        owner: www-data
+        group: www-data
+        state: link
+
+    - name: Reload sevices
+      service:
+        name: "{{ item }}"
+        state: reloaded
+      with_items:
+        - nginx
+        - php7.4-fpm
+
+    - name: Clean up old deployment
+      become: yes
+      file:
+        path: "{{ previous_live_site_sym.stat.lnk_target }}"
+        state: absent
